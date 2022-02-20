@@ -1,7 +1,10 @@
 package ru.bstu.ai.core.service;
 
 import ru.bstu.ai.core.model.State;
+import ru.bstu.ai.core.model.Statistic;
 
+import java.util.List;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 public interface Solution {
@@ -12,6 +15,9 @@ public interface Solution {
      * @param callback для отображения в ui текущего состояния
      * @return результирующее состояние
      */
-    State solve(State initState, Consumer<State> callback);
+    Statistic solve(State initState);
+
+
+
 
 }
