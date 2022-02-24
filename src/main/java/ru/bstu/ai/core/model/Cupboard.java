@@ -1,6 +1,8 @@
 package ru.bstu.ai.core.model;
 
 import kotlin.Pair;
+import ru.bstu.ai.core.enums.Move;
+import ru.bstu.ai.core.enums.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +24,14 @@ public class Cupboard {
         switch (position) {
             case SQUARE:
                 position = Position.VERTICAL;
-                x++;
+                x+=2;
                 break;
             case VERTICAL:
+                x++;
                 position = Position.SQUARE;
                 break;
             case HORIZONTAL:
-                x++;
+                x+=2;
                 break;
         }
     }
@@ -36,14 +39,15 @@ public class Cupboard {
     private void moveLeft() {
         switch (position) {
             case SQUARE:
+                x--;
                 position = Position.VERTICAL;
                 break;
             case VERTICAL:
                 position = Position.SQUARE;
-                x--;
+                x-=2;
                 break;
             case HORIZONTAL:
-                x--;
+                x-=2;
                 break;
         }
     }
@@ -51,14 +55,15 @@ public class Cupboard {
     private void moveUp() {
         switch (position) {
             case SQUARE:
+                y--;
                 position = Position.HORIZONTAL;
                 break;
             case VERTICAL:
-                y--;
+                y-=2;
                 break;
             case HORIZONTAL:
                 position = Position.SQUARE;
-                y--;
+                y-=2;
                 break;
         }
     }
@@ -67,12 +72,13 @@ public class Cupboard {
         switch (position) {
             case SQUARE:
                 position = Position.HORIZONTAL;
-                y++;
+                y+=2;
                 break;
             case VERTICAL:
-                y++;
+                y+=2;
                 break;
             case HORIZONTAL:
+                y++;
                 position = Position.SQUARE;
                 break;
         }

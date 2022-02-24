@@ -1,6 +1,6 @@
 package ru.bstu.ai.core.model;
 
-import com.sun.javafx.binding.StringFormatter;
+import ru.bstu.ai.core.enums.Position;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ public class Field {
     };
     public int m = 5;
     public int n = 5;
-    public Cupboard winCup = new Cupboard(2,2,Position.SQUARE);
+    public Cupboard winCup = new Cupboard(2,2, Position.SQUARE);
 
     //1 1 1 1 0
     //& & 1 1 1

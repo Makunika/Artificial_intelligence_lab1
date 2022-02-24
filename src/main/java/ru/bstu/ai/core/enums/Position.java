@@ -1,4 +1,4 @@
-package ru.bstu.ai.core.model;
+package ru.bstu.ai.core.enums;
 
 public enum Position {
     SQUARE,

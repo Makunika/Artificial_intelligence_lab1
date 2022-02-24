@@ -1,14 +1,12 @@
 package ru.bstu.ai.core.service;
 
-import ru.bstu.ai.core.model.Move;
+import ru.bstu.ai.core.enums.Move;
 import ru.bstu.ai.core.model.State;
 import ru.bstu.ai.core.model.Statistic;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Stack;
-import java.util.function.Consumer;
 
 /**
  * логика ИИ с поиском в ГЛУБИНУ
@@ -46,7 +44,7 @@ public class SolutionDepthImpl implements Solution {
         return new Statistic(
                 iteration,
                 maxO,
-                arrO.size(),
+                0,
                 arrC.size(),
                 null
         );

@@ -1,6 +1,8 @@
 package ru.bstu.ai.core.model;
 
 import kotlin.Pair;
+import ru.bstu.ai.core.enums.Move;
+import ru.bstu.ai.core.enums.Position;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,8 +13,8 @@ import java.util.Objects;
 public class State {
 
     private Cupboard cupboard;
-    private Field field;
-    private State prevState;
+    private final Field field;
+    private final State prevState;
 
     public State(Cupboard cupboard, Field field) {
         this.cupboard = cupboard;
@@ -24,6 +26,12 @@ public class State {
         this.cupboard = cupboard;
         this.field = field;
         this.prevState = prevState;
+    }
+
+    public State(String filename, int x, int y, Position position) {
+        this.cupboard = new Cupboard(x, y, position);
+        this.field = new Field(filename);
+        this.prevState = null;
     }
 
 
@@ -47,7 +55,7 @@ public class State {
                         field.isProbablePoint(cupboard.getX(), cupboard.getY()) &&
                         field.isProbablePoint(cupboard.getX() , cupboard.getY() + 1) &&
                         field.isProbablePoint(cupboard.getX() + 1, cupboard.getY()) &&
-                        field.isProbablePoint(cupboard.getX()+1, cupboard.getY() + 1);
+                        field.isProbablePoint(cupboard.getX() + 1, cupboard.getY() + 1);
             case VERTICAL:
                 return
                         field.isProbablePoint(cupboard.getX(), cupboard.getY()) &&
