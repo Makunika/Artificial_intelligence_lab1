@@ -14,6 +14,8 @@ public class MainTest {
         Solution solution = new SolutionDepthImpl();
         Statistic solve = solution.solve(state);
 
+        String s = solve.toJson();
+
         solve.printStat();
 
     }

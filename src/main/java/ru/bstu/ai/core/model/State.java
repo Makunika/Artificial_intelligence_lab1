@@ -1,9 +1,15 @@
 package ru.bstu.ai.core.model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import kotlin.Pair;
 import ru.bstu.ai.core.enums.Move;
 import ru.bstu.ai.core.enums.Position;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,10 +34,55 @@ public class State {
         this.prevState = prevState;
     }
 
-    public State(String filename, int x, int y, Position position) {
-        this.cupboard = new Cupboard(x, y, position);
-        this.field = new Field(filename);
+    public State(String filename) {
+        this.field = new Field();
         this.prevState = null;
+
+        List<String> str = null;
+        try {
+            str = Files.readAllLines(Path.of(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.field.n = str.size() - 2;
+        this.field.m = str.get(0).length();
+        this.field.map = new int[this.field.m][];
+        for(int i = 0; i < this.field.n; i++){
+            this.field.map[i] = new int[this.field.m];
+        }
+
+        for (int i = 0; i < this.field.n; i++) {
+            for (int j = 0; j < this.field.m; j++) {
+                this.field.map[i][j] = Integer.parseInt(String.valueOf(str.get(i).charAt(j)));
+            }
+        }
+
+        String stringWinCup = str.get(str.size() - 2);
+        String[] split = stringWinCup.split("");
+        Position position;
+
+        switch(split[2]) {
+            case "1": position = Position.SQUARE; break;
+            case "2": position = Position.VERTICAL; break;
+            case "3": position = Position.HORIZONTAL; break;
+            default: throw new IllegalArgumentException("Seriously?!");
+        }
+
+        this.field.winCup = new Cupboard(Integer.parseInt(split[0]),Integer.parseInt(split[1]),position);
+
+        String stringCup = str.get(str.size() - 1);
+        String[] split2 = stringCup.split("");
+        Position position2;
+
+        switch(split2[2]) {
+            case "1": position2 = Position.SQUARE; break;
+            case "2": position2 = Position.VERTICAL; break;
+            case "3": position2 = Position.HORIZONTAL; break;
+            default: throw new IllegalArgumentException("Seriously?!");
+        }
+
+        this.cupboard = new Cupboard(Integer.parseInt(split2[0]),Integer.parseInt(split2[1]), position2);
     }
 
 
@@ -92,6 +143,30 @@ public class State {
         if (o == null || getClass() != o.getClass()) return false;
         State state = (State) o;
         return Objects.equals(cupboard, state.cupboard);
+    }
+
+    public JsonArray toJson() {
+        JsonArray jsonElementsMain = new JsonArray();
+        List<Pair<Integer, Integer>> pointsCup = cupboard.getPoints();
+        List<Pair<Integer, Integer>> pointsWin = field.winCup.getPoints();
+
+        for (int i = 0; i < field.map.length; i++) {
+            JsonArray jsonElements = new JsonArray();
+            jsonElementsMain.add(jsonElements);
+            for (int j = 0; j < field.map[i].length; j++) {
+                int finalI = i;
+                int finalJ = j;
+                if (pointsCup.stream().anyMatch(p -> p.getFirst().equals(finalJ) && p.getSecond().equals(finalI))) {
+                    jsonElements.add(2);
+                }
+                else if (pointsWin.stream().anyMatch(p -> p.getFirst().equals(finalJ) && p.getSecond().equals(finalI))) {
+                    jsonElements.add(5);
+                } else {
+                    jsonElements.add(field.map[i][j]);
+                }
+            }
+        }
+        return jsonElementsMain;
     }
 
 

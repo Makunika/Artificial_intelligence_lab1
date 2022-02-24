@@ -1,0 +1,37 @@
+body {
+  font-family: verdana, tahoma, arial;
+}
+
+.board {
+  border: 1px solid black;
+  display: inline-block;
+}
+
+.row {
+}
+
+.square {
+  background-color: green;
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  text-align: center;
+  line-height: 64px;
+  position: relative;
+}
+
+.void {
+  background-color: rgb(0, 0, 0);
+}
+
+.winPoint {
+  background-color: rgb(161, 14, 154);
+}
+
+.shelf {
+  background-color: rgb(196, 95, 13);
+}
+
+.floor {
+  background-color: rgb(197, 218, 205);
+}

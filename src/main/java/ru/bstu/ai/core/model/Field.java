@@ -94,7 +94,7 @@ public class Field {
     public boolean isProbablePoint(int x, int y) {
         try {
             return map[y][x] == 1;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return false;
         }
     }

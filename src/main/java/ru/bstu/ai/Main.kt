@@ -1,8 +1,8 @@
 package ru.bstu.ai
 
-import ru.bstu.ai.ui.AiApplication
-import tornadofx.launch
+import ru.bstu.ai.server.server
+
 
 fun main(args: Array<String>) {
-    launch<AiApplication>(args)
+    server()
 }
