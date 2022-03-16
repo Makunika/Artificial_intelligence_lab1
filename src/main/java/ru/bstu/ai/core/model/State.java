@@ -20,6 +20,8 @@ public class State {
     private final Field field;
     private final State prevState;
     private double value;
+    private double bestChildValue = 99999999999999.;
+    private boolean isValid = true;
 
     public State(Cupboard cupboard, Field field) {
         this.cupboard = cupboard;
@@ -229,6 +231,22 @@ public class State {
     public void setSimpleValue(double value) {
         System.out.println("new value: " + value);
         this.value = value;
+    }
+
+    public void setBestChildValue(double bestChildValue) {
+        this.bestChildValue = Math.min(bestChildValue, this.bestChildValue);
+    }
+
+    public double getBestChildValue() {
+        return bestChildValue;
+    }
+
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setValid(boolean valid) {
+        isValid = valid;
     }
 
     public int getSizeHistory() {

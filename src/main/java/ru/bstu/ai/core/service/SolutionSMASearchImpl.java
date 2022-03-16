@@ -7,6 +7,7 @@ import ru.bstu.ai.core.model.Statistic;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -18,7 +19,7 @@ public class SolutionSMASearchImpl implements Solution {
         PriorityQueue<State> arrO = new PriorityQueue<>(Comparator.comparingDouble(State::getValue));
 
         arrO.offer(initState);
-        List<State> arrC = new LinkedList<>();
+        PriorityQueue<State> arrC = new PriorityQueue<>(Comparator.comparingDouble(State::getBestChildValue));
 
         int iteration = 0;
         int maxO = 0;
@@ -31,6 +32,19 @@ public class SolutionSMASearchImpl implements Solution {
 
             State x = arrO.poll();
             if (x.isWin()) {
+
+                List<State> collect = arrC.stream().filter(state -> state.isValid() && state.getBestChildValue() < 9999.)
+                        .sorted(Comparator.comparingDouble(State::getBestChildValue))
+                        .limit(20)
+                        .collect(Collectors.toList());
+                if (collect.stream().min(Comparator.comparingDouble(State::getBestChildValue))
+                        .map(State::getBestChildValue).orElse(99999.) < x.getValue()) {
+                    collect.forEach(state -> state.setValid(false));
+                    arrO.clear();
+                    arrO.addAll(collect);
+                    continue;
+                }
+
                 return new Statistic(
                         iteration,
                         maxO,
@@ -51,7 +65,7 @@ public class SolutionSMASearchImpl implements Solution {
         );
     }
 
-    private void p(Queue<State> arrO, List<State> arrC, State x) {
+    private void p(Queue<State> arrO, Queue<State> arrC, State x) {
         if (x.isProbableMove(Move.UP)) {
             State newState = x.moveAndGetNewState(Move.UP);
             newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
@@ -74,7 +88,7 @@ public class SolutionSMASearchImpl implements Solution {
         }
     }
 
-    private void processNewState(Queue<State> arrO, List<State> arrC, State prevState, State newState) {
+    private void processNewState(Queue<State> arrO, Queue<State> arrC, State prevState, State newState) {
         if (!(arrO.contains(newState) || arrC.contains(newState))) {
             arrO.offer(newState);
         } else if (arrO.contains(newState) && newState.getValue() < prevState.getValue()) {
@@ -84,37 +98,47 @@ public class SolutionSMASearchImpl implements Solution {
             arrO.offer(newState);
             arrC.remove(newState);
         }
-        if (arrO.size() > 100) {
+        if (arrO.size() > 20) {
             arrO
                     .stream()
                     .max(Comparator.comparingDouble(State::getValue))
-                    .ifPresent(arrO::remove);
+                    .ifPresent(stateToDelete -> {
+                        State prev = stateToDelete.getPrevState();
+                        if (prev != null) {
+                            prev.setBestChildValue(stateToDelete.getValue());
+                        }
+                        arrO.remove(stateToDelete);
+                        arrC.remove(stateToDelete);
+                    });
+        }
+        if (arrO.isEmpty()) {
+            List<State> collect = arrC.stream().filter(state -> state.isValid() && state.getBestChildValue() < 9999.)
+                    .sorted(Comparator.comparingDouble(State::getBestChildValue))
+                    .limit(20)
+                    .collect(Collectors.toList());
+            if (!collect.isEmpty()) {
+                collect.forEach(state -> state.setValid(false));
+                arrO.addAll(collect);
+            }
         }
     }
 
     private final List<Function<State, Double>> heuristics = List.of(
             (state) -> {
+                /*
+                 * 1.5
+                 * 11
+                 *  |
+                 *  |------&&
+                 *
+                 * */
+
                 Cupboard winPoint = state.getField().winCup;
-                State prevState = state.getPrevState();
-                if (prevState == null) {
-                    Cupboard newCup = state.getCupboard();
-                    return sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-                }
-                Cupboard previousCup = prevState.getCupboard();
-                Cupboard newCup = state.getCupboard();
-                double prevDif = sqrt(pow(winPoint.getX()-previousCup.getX(),2) + pow(winPoint.getY()-previousCup.getY(),2));
-                double newDif = sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-                return Math.min(prevDif,newDif);
+                Cupboard cup = state.getCupboard();
+
+                double horizontal = Math.abs(winPoint.getX() - cup.getX());
+                double vertical = Math.abs(winPoint.getY() - cup.getY());
+                return (horizontal + vertical)*1.5;
             }
-//            ,
-//            (state) -> {
-//                Cupboard current = state.getCupboard();
-//                Cupboard vertical = new Cupboard(state.getField().winCup.getX(),current.getY(),state.getField().winCup.getPosition());
-//                Cupboard horizontal = new Cupboard(current.getX(),state.getField().winCup.getY(),state.getField().winCup.getPosition());
-//
-//                double horValue = sqrt(pow(horizontal.getX()-current.getX(),2) + pow(horizontal.getY()-current.getY(),2));
-//                double vertValue = sqrt(pow(vertical.getX()-current.getX(),2) + pow(vertical.getY()-current.getY(),2));
-//                return Math.min(vertValue,horValue);
-//            }
     );
 }

@@ -88,18 +88,38 @@ public class SolutionASearchImpl implements Solution {
 
     private final List<Function<State, Double>> heuristics = List.of(
             (state) -> {
+                /*
+                 * 1.5
+                 * 11
+                 *  |
+                 *  |------&&
+                 *
+                 * */
+
                 Cupboard winPoint = state.getField().winCup;
-                State prevState = state.getPrevState();
-                if (prevState == null) {
-                    Cupboard newCup = state.getCupboard();
-                    return sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-                }
-                Cupboard previousCup = prevState.getCupboard();
-                Cupboard newCup = state.getCupboard();
-                double prevDif = sqrt(pow(winPoint.getX()-previousCup.getX(),2) + pow(winPoint.getY()-previousCup.getY(),2));
-                double newDif = sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-                return Math.min(prevDif,newDif);
+                Cupboard cup = state.getCupboard();
+
+                double horizontal = Math.abs(winPoint.getX() - cup.getX());
+                double vertical = Math.abs(winPoint.getY() - cup.getY());
+                return (horizontal + vertical)*1.5;
             }
+//            (state) ->
+//            {
+//                Cupboard winPoint = state.getField().winCup;
+//                State prevState = state.getPrevState();
+//                if (prevState == null) {
+//                    Cupboard newCup = state.getCupboard();
+//                    return sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
+//                }
+//                Cupboard previousCup = prevState.getCupboard();
+//                Cupboard newCup = state.getCupboard();
+//
+//
+//
+//                double prevDif = sqrt(pow(winPoint.getX()-previousCup.getX(),2) + pow(winPoint.getY()-previousCup.getY(),2));
+//                double newDif = sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
+//                return Math.min(prevDif,newDif) * 1.5;
+//            }
 //            ,
 //            (state) -> {
 //                Cupboard current = state.getCupboard();
