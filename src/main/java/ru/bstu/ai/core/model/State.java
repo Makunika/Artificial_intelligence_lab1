@@ -1,7 +1,5 @@
 package ru.bstu.ai.core.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import kotlin.Pair;
 import ru.bstu.ai.core.enums.Move;
@@ -21,6 +19,7 @@ public class State {
     private Cupboard cupboard;
     private final Field field;
     private final State prevState;
+    private double value;
 
     public State(Cupboard cupboard, Field field) {
         this.cupboard = cupboard;
@@ -59,7 +58,7 @@ public class State {
         }
 
         String stringWinCup = str.get(str.size() - 2);
-        String[] split = stringWinCup.split("");
+        String[] split = stringWinCup.split(",");
         Position position;
 
         switch(split[2]) {
@@ -72,7 +71,7 @@ public class State {
         this.field.winCup = new Cupboard(Integer.parseInt(split[0]),Integer.parseInt(split[1]),position);
 
         String stringCup = str.get(str.size() - 1);
-        String[] split2 = stringCup.split("");
+        String[] split2 = stringCup.split(",");
         Position position2;
 
         switch(split2[2]) {
@@ -216,5 +215,38 @@ public class State {
 
     public State getPrevState() {
         return prevState;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        System.out.println("new value: " + value + getSizeHistory());
+        this.value = value + getSizeHistory();
+    }
+
+    public void setSimpleValue(double value) {
+        System.out.println("new value: " + value);
+        this.value = value;
+    }
+
+    public int getSizeHistory() {
+        int sumSteps = 0;
+        State cur = this;
+        while (true) {
+            State prev = cur.prevState;
+            if (prev != null) {
+                sumSteps += Math.max(
+                        Math.abs(prev.getCupboard().getX() - cur.getCupboard().getX()),
+                        Math.abs(prev.getCupboard().getY() - cur.getCupboard().getY()
+                        )
+                );
+                cur = prev;
+            } else {
+                break;
+            }
+        }
+        return sumSteps;
     }
 }

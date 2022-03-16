@@ -53,7 +53,7 @@ public class Field {
         }
 
         String stringWinCup = str.get(str.size() - 1);
-        String[] split = stringWinCup.split("");
+        String[] split = stringWinCup.split(",");
         Position position;
 
         switch(split[2]) {
@@ -113,5 +113,9 @@ public class Field {
         sb.append("winY = ").append(winCup.getY());
         sb.append("position = ").append(winCup.getPosition());
         return sb.toString();
+    }
+
+    public double maxDiagonal() {
+        return Math.sqrt(Math.pow(m, 2) +  Math.pow(n, 2));
     }
 }

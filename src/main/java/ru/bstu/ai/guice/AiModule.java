@@ -3,9 +3,7 @@ package ru.bstu.ai.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
-import ru.bstu.ai.core.service.Solution;
-import ru.bstu.ai.core.service.SolutionDepthImpl;
-import ru.bstu.ai.core.service.SolutionWideImpl;
+import ru.bstu.ai.core.service.*;
 
 /**
  * инъекция всяких зависимостей (наших сервисов для ui).
@@ -20,6 +18,16 @@ public class AiModule extends AbstractModule {
         bind(Solution.class)
                 .annotatedWith(Names.named("Depth"))
                 .to(SolutionDepthImpl.class)
+                .in(Scopes.SINGLETON);
+
+        bind(Solution.class)
+                .annotatedWith(Names.named("A"))
+                .to(SolutionASearchImpl.class)
+                .in(Scopes.SINGLETON);
+
+        bind(Solution.class)
+                .annotatedWith(Names.named("SMA"))
+                .to(SolutionSMASearchImpl.class)
                 .in(Scopes.SINGLETON);
 
         bind(Solution.class)
