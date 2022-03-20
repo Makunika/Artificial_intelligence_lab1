@@ -267,4 +267,8 @@ public class State {
         }
         return sumSteps;
     }
+
+    public void deleteBestChildValue() {
+        bestChildValue = 99999999999999.;
+    }
 }

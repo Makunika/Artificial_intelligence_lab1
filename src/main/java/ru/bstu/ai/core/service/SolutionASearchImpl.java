@@ -18,7 +18,7 @@ public class SolutionASearchImpl implements Solution {
         PriorityQueue<State> arrO = new PriorityQueue<>(Comparator.comparingDouble(State::getValue));
 
         arrO.offer(initState);
-        List<State> arrC = new LinkedList<>();
+        PriorityQueue<State> arrC = new PriorityQueue<>(Comparator.comparingDouble(State::getBestChildValue));
 
         int iteration = 0;
         int maxO = 0;
@@ -41,6 +41,7 @@ public class SolutionASearchImpl implements Solution {
             }
             arrC.add(x);
             p(arrO, arrC, x);
+            afterIteration(arrO, arrC, x);
         }
         return new Statistic(
                 iteration,
@@ -51,7 +52,11 @@ public class SolutionASearchImpl implements Solution {
         );
     }
 
-    private void p(Queue<State> arrO, List<State> arrC, State x) {
+    protected void afterIteration(PriorityQueue<State> arrO, PriorityQueue<State> arrC, State x) {
+
+    }
+
+    protected void p(Queue<State> arrO, Queue<State> arrC, State x) {
         if (x.isProbableMove(Move.UP)) {
             State newState = x.moveAndGetNewState(Move.UP);
             newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
@@ -74,7 +79,7 @@ public class SolutionASearchImpl implements Solution {
         }
     }
 
-    private void processNewState(Queue<State> arrO, List<State> arrC, State prevState, State newState) {
+    private void processNewState(Queue<State> arrO, Queue<State> arrC, State prevState, State newState) {
         if (!(arrO.contains(newState) || arrC.contains(newState))) {
             arrO.offer(newState);
         } else if (arrO.contains(newState) && newState.getValue() < prevState.getValue()) {
@@ -86,7 +91,7 @@ public class SolutionASearchImpl implements Solution {
         }
     }
 
-    private final List<Function<State, Double>> heuristics = List.of(
+    protected final List<Function<State, Double>> heuristics = List.of(
             (state) -> {
                 /*
                  * 1.5
@@ -101,7 +106,7 @@ public class SolutionASearchImpl implements Solution {
 
                 double horizontal = Math.abs(winPoint.getX() - cup.getX());
                 double vertical = Math.abs(winPoint.getY() - cup.getY());
-                return (horizontal + vertical)*1.5;
+                return (horizontal + vertical) / ((8. / 12. * 2.) + (8. / 4.));
             }
 //            (state) ->
 //            {
