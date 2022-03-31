@@ -59,22 +59,22 @@ public class SolutionASearchImpl implements Solution {
     protected void p(Queue<State> arrO, Queue<State> arrC, State x) {
         if (x.isProbableMove(Move.UP)) {
             State newState = x.moveAndGetNewState(Move.UP);
-            newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
+            newState.setValue(getHeuristics().stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
             processNewState(arrO, arrC, x, newState);
         }
         if (x.isProbableMove(Move.LEFT)) {
             State newState = x.moveAndGetNewState(Move.LEFT);
-            newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
+            newState.setValue(getHeuristics().stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
             processNewState(arrO, arrC, x, newState);
         }
         if (x.isProbableMove(Move.RIGHT)) {
             State newState = x.moveAndGetNewState(Move.RIGHT);
-            newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
+            newState.setValue(getHeuristics().stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
             processNewState(arrO, arrC, x, newState);
         }
         if (x.isProbableMove(Move.DOWN)) {
             State newState = x.moveAndGetNewState(Move.DOWN);
-            newState.setValue(heuristics.stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
+            newState.setValue(getHeuristics().stream().mapToDouble(f -> f.apply(newState)).max().orElse(0));
             processNewState(arrO, arrC, x, newState);
         }
     }
@@ -91,7 +91,11 @@ public class SolutionASearchImpl implements Solution {
         }
     }
 
-    protected final List<Function<State, Double>> heuristics = List.of(
+    protected List<Function<State, Double>> getHeuristics() {
+        return heuristics;
+    }
+
+    private final List<Function<State, Double>> heuristics = List.of(
             (state) -> {
                 /*
                  * 1.5
@@ -104,36 +108,51 @@ public class SolutionASearchImpl implements Solution {
                 Cupboard winPoint = state.getField().winCup;
                 Cupboard cup = state.getCupboard();
 
-                double horizontal = Math.abs(winPoint.getX() - cup.getX());
-                double vertical = Math.abs(winPoint.getY() - cup.getY());
+                int horizontal = Math.abs(winPoint.getX() - cup.getX());
+                int vertical = Math.abs(winPoint.getY() - cup.getY());
                 return (horizontal + vertical) / ((8. / 12. * 2.) + (8. / 4.));
+            },
+            (state) -> {
+                double koeffWall = 1.5;
+
+                Cupboard winPoint = state.getField().winCup;
+                Cupboard cup = state.getCupboard();
+
+                int horizontal = Math.abs(winPoint.getX() - cup.getX());
+                int vertical = Math.abs(winPoint.getY() - cup.getY());
+
+                if (horizontal + vertical < 20) {
+                    int horizontalNoAbs = horizontal != 0 ? (winPoint.getX() - cup.getX()) / horizontal : 0;
+                    int verticalNoAbs = vertical != 0 ? (winPoint.getY() - cup.getY()) / vertical : 0;
+
+                    int xCurrent = cup.getX();
+                    int yCurrent = cup.getY();
+                    if (
+                            checkWall(state, horizontal, vertical, horizontalNoAbs, verticalNoAbs, xCurrent, yCurrent)
+                                    &&
+                            checkWall(state, vertical, horizontal, verticalNoAbs, horizontalNoAbs, xCurrent, yCurrent)
+                    ) {
+                        return ((horizontal + vertical) / ((8. / 12. * 2.) + (8. / 4.))) * koeffWall;
+                    }
+                }
+
+                return 0.;
             }
-//            (state) ->
-//            {
-//                Cupboard winPoint = state.getField().winCup;
-//                State prevState = state.getPrevState();
-//                if (prevState == null) {
-//                    Cupboard newCup = state.getCupboard();
-//                    return sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-//                }
-//                Cupboard previousCup = prevState.getCupboard();
-//                Cupboard newCup = state.getCupboard();
-//
-//
-//
-//                double prevDif = sqrt(pow(winPoint.getX()-previousCup.getX(),2) + pow(winPoint.getY()-previousCup.getY(),2));
-//                double newDif = sqrt(pow(winPoint.getX()-newCup.getX(),2) + pow(winPoint.getY()-newCup.getY(),2));
-//                return Math.min(prevDif,newDif) * 1.5;
-//            }
-//            ,
-//            (state) -> {
-//                Cupboard current = state.getCupboard();
-//                Cupboard vertical = new Cupboard(state.getField().winCup.getX(),current.getY(),state.getField().winCup.getPosition());
-//                Cupboard horizontal = new Cupboard(current.getX(),state.getField().winCup.getY(),state.getField().winCup.getPosition());
-//
-//                double horValue = sqrt(pow(horizontal.getX()-current.getX(),2) + pow(horizontal.getY()-current.getY(),2));
-//                double vertValue = sqrt(pow(vertical.getX()-current.getX(),2) + pow(vertical.getY()-current.getY(),2));
-//                return Math.min(vertValue,horValue);
-//            }
     );
+
+    private boolean checkWall(State state, int pathOne, int pathTwo, int addPathOne, int addPathTwo, int xCurrent, int yCurrent) {
+        for (int i = 0; i < pathOne; i++) {
+            xCurrent += addPathOne;
+            if (state.getField().isProbablePoint(xCurrent, yCurrent)) {
+                return true;
+            }
+        }
+        for (int i = 0; i < pathTwo; i++) {
+            yCurrent += addPathTwo;
+            if (state.getField().isProbablePoint(xCurrent, yCurrent)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

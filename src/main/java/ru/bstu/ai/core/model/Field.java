@@ -1,5 +1,6 @@
 package ru.bstu.ai.core.model;
 
+import kotlin.Pair;
 import ru.bstu.ai.core.enums.Position;
 
 import java.io.IOException;
@@ -97,6 +98,15 @@ public class Field {
         } catch (IndexOutOfBoundsException | NullPointerException e) {
             return false;
         }
+    }
+
+    public boolean isProbableCup(Cupboard cupboard) {
+        for (Pair<Integer, Integer> point : cupboard.getPoints()) {
+            if (!isProbablePoint(point.getFirst(), point.getSecond())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

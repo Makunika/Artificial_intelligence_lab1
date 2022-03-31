@@ -101,4 +101,16 @@ public class Statistic {
             current = current.getPrevState();
         }
     }
+
+    public void printStatSmall() {
+        System.out.println("Число итераций: " + countIteration);
+        System.out.println("Максимальное число вершин-кандидатов: " + maxO);
+        System.out.println("Число вершин-кандидатов на последней итерации: " + endO);
+        System.out.println("Число пройденных вершин на последней итерации: " + endC);
+        System.out.println("Путь:");
+        System.out.println("ШАГИ:" + getEndState().getCountSteps());
+        if (endState == null) {
+            System.out.println("Решение не было найдено");
+        }
+    }
 }

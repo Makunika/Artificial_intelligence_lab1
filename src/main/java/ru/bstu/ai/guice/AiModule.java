@@ -17,7 +17,7 @@ public class AiModule extends AbstractModule {
 
         bind(Solution.class)
                 .annotatedWith(Names.named("Depth"))
-                .to(SolutionDepthImpl.class)
+                .to(SolutionABeforeSearhImpl.class)
                 .in(Scopes.SINGLETON);
 
         bind(Solution.class)

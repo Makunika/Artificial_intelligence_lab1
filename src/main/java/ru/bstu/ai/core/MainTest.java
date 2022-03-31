@@ -4,19 +4,81 @@ import ru.bstu.ai.core.enums.Position;
 import ru.bstu.ai.core.model.*;
 import ru.bstu.ai.core.service.Solution;
 import ru.bstu.ai.core.service.SolutionDepthImpl;
+import ru.bstu.ai.core.service.SolutionSMASearchImpl;
 
 public class MainTest {
 
     public static void main(String[] args) {
-        Field field = new Field("file.txt");
-        State state = new State(new Cupboard(0, 1, Position.HORIZONTAL), field);
 
-        Solution solution = new SolutionDepthImpl();
-        Statistic solve = solution.solve(state);
+        Result bestIteration = new Result();
+        Result bestShag = new Result();
+        SolutionSMASearchImpl solutionSMASearch1 = new SolutionSMASearchImpl(15, 5);
+        Statistic solve2 = solutionSMASearch1.solve(new State("file.txt"));
+        solve2.printStatSmall();
 
-        String s = solve.toJson();
+        for (int left = 1; left < 25; left++) {
+            for (int right = left; right < left + 15; right++) {
+                System.out.println("left = " + left );
+                System.out.println("right = " + right );
+                SolutionSMASearchImpl solutionSMASearch = new SolutionSMASearchImpl(right, left);
+                Statistic solve = solutionSMASearch.solve(new State("file.txt"));
+                solve.printStatSmall();
+                if (bestIteration.getStatistic() == null || bestIteration.getStatistic().getCountIteration() > solve.getCountIteration()) {
+                    bestIteration.setStatistic(solve);
+                    bestIteration.setLeft(left);
+                    bestIteration.setRight(right);
+                }
+                if (bestShag.getStatistic() == null || bestShag.getStatistic().getEndState().getCountSteps() > solve.getEndState().getCountSteps()) {
+                    bestShag.setStatistic(solve);
+                    bestShag.setLeft(left);
+                    bestShag.setRight(right);
+                }
+            }
+        }
+        System.out.println(bestIteration);
+        System.out.println("ШАГИ");
+        System.out.println(bestShag);
+    }
 
-        solve.printStat();
 
+    static class Result {
+        Statistic statistic;
+        int left;
+        int right;
+
+        public Result() {}
+
+        public Statistic getStatistic() {
+            return statistic;
+        }
+
+        public int getLeft() {
+            return left;
+        }
+
+        public int getRight() {
+            return right;
+        }
+
+        public void setStatistic(Statistic statistic) {
+            this.statistic = statistic;
+        }
+
+        public void setLeft(int left) {
+            this.left = left;
+        }
+
+        public void setRight(int right) {
+            this.right = right;
+        }
+
+        @Override
+        public String toString() {
+            statistic.printStatSmall();
+            return "Result{" +
+                    ", left=" + left +
+                    ", right=" + right +
+                    '}';
+        }
     }
 }

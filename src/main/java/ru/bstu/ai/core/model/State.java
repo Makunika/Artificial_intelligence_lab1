@@ -224,12 +224,12 @@ public class State {
     }
 
     public void setValue(double value) {
-        System.out.println("new value: " + value + getSizeHistory());
+        //System.out.println("new value: " + value + getSizeHistory());
         this.value = value + getSizeHistory();
     }
 
     public void setSimpleValue(double value) {
-        System.out.println("new value: " + value);
+        //System.out.println("new value: " + value);
         this.value = value;
     }
 
@@ -266,6 +266,16 @@ public class State {
             }
         }
         return sumSteps;
+    }
+
+    public int getCountSteps() {
+        int sum = 0;
+        State current = this;
+        while (current != null) {
+            sum++;
+            current = current.getPrevState();
+        }
+        return sum;
     }
 
     public void deleteBestChildValue() {
