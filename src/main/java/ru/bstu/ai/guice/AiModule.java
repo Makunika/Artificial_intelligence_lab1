@@ -15,14 +15,15 @@ public class AiModule extends AbstractModule {
         bind(Solution.class)
                 .to(SolutionWideImpl.class);
 
+
         bind(Solution.class)
                 .annotatedWith(Names.named("Depth"))
-                .to(SolutionABeforeSearhImpl.class)
+                .to(SolutionDepthImpl.class)
                 .in(Scopes.SINGLETON);
 
         bind(Solution.class)
                 .annotatedWith(Names.named("A"))
-                .to(SolutionASearchImpl.class)
+                .to(SolutionABeforeSearhImpl.class)
                 .in(Scopes.SINGLETON);
 
         bind(Solution.class)

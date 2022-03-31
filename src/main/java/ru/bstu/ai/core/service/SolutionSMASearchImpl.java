@@ -20,8 +20,8 @@ public class SolutionSMASearchImpl extends SolutionASearchImpl {
 //    int right = 20;
 //    int left = 8;
 
-    int right = 20;
-    int left = 8;
+    int right = 15;
+    int left = 5;
 
     public SolutionSMASearchImpl() {
     }
@@ -104,11 +104,6 @@ public class SolutionSMASearchImpl extends SolutionASearchImpl {
 
                 double horizontal = Math.abs(winPoint.getX() - cup.getX());
                 double vertical = Math.abs(winPoint.getY() - cup.getY());
-//                if (horizontal + vertical < 15 && horizontal + vertical > 5) {
-//                    return getMinPath(state, 5);
-//                } else {
-//                    return 0.;
-//                }
 
                 if (horizontal + vertical < right && horizontal + vertical > left) {
                     return getMinPath(state, 5);

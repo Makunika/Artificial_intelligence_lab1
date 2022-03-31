@@ -59,13 +59,14 @@ $(document).ready(function () {
     $(".board").empty();
 
     var state = json.states[counter];
-    var squareVoid = $("<div class='square void'></div>");
-    var squareWinPoint = $("<div class='square winPoint'></div>");
-    var squareShelf = $("<div class='square shelf'></div>");
-    var squareFloor = $("<div class='square floor'></div>");
+    let width = 900 / state.length;
+    var squareVoid = $(`<div class='square void' style='width: ${width}px; height: ${width}px;'></div>`);
+    var squareWinPoint = $(`<div class='square winPoint' style='width: ${width}px; height: ${width}px;'></div>`);
+    var squareShelf = $(`<div class='square shelf' style='width: ${width}px; height: ${width}px;'></div>`);
+    var squareFloor = $(`<div class='square floor' style='width: ${width}px; height: ${width}px;'></div>`);
 
     var addRow = (rowId) => {
-      var row = $("<div class='row'></div>");
+      var row = $(`<div class='row' style='height: ${width}px;'></div>`);
 
       for (var i = 0; i < json.m; i++) {
         var newSquare;
@@ -213,3 +214,15 @@ $(document).ready(function () {
 
   refresh();
 });
+
+
+
+hui = (n, d) => {
+  let srt = '';
+  for (let i = 2; i < d + 1; i++) {
+    srt+=`x^(${i})+`
+  }
+
+  return `${n+1}=1+x+`+srt;
+
+}

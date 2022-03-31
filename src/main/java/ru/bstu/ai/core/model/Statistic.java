@@ -12,6 +12,7 @@ public class Statistic {
     private int endC;
 
     private State endState;
+    private State firstState;
 
     public Statistic(int countIteration, int maxO, int endO, int endC, State endState) {
         this.countIteration = countIteration;
@@ -19,6 +20,16 @@ public class Statistic {
         this.endO = endO;
         this.endC = endC;
         this.endState = endState;
+        this.firstState = null;
+    }
+
+    public Statistic(int countIteration, int maxO, int endO, int endC, State endState, State firstState) {
+        this.countIteration = countIteration;
+        this.maxO = maxO;
+        this.endO = endO;
+        this.endC = endC;
+        this.endState = endState;
+        this.firstState = firstState;
     }
 
     public int getCountIteration() {
@@ -64,7 +75,17 @@ public class Statistic {
     public String toJson(){
         Gson gson = new GsonBuilder().create();
         if (endState == null) {
-            return gson.toJson(null);
+            JsonArray jsonElements = new JsonArray();
+            jsonElements.add(firstState.toJson());
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.add("states", jsonElements);
+            jsonObject.add("countIteration", gson.toJsonTree(countIteration));
+            jsonObject.add("maxO", gson.toJsonTree(maxO));
+            jsonObject.add("endO", gson.toJsonTree(endO));
+            jsonObject.add("endC", gson.toJsonTree(endC));
+            jsonObject.add("m", gson.toJsonTree(firstState.getField().m));
+            jsonObject.add("n", gson.toJsonTree(firstState.getField().n));
+            return gson.toJson(jsonObject);
             //return "Решение не было найдено";
         }
         JsonArray jsonElements = new JsonArray();
@@ -112,5 +133,20 @@ public class Statistic {
         if (endState == null) {
             System.out.println("Решение не было найдено");
         }
+    }
+
+    public String getSumGen() {
+        printStatSmall();
+        StringBuilder sb = new StringBuilder("");
+        if (getEndState() != null) {
+            StringBuilder str = new StringBuilder();
+            for (int i = 2; i < getEndState().getCountSteps(); i++) {
+                str.append("x^{").append(i).append("}+");
+            }
+            sb.append(maxO + 1).append("=").append("1+x+").append(str);
+        }
+
+        return String.valueOf(maxO) + " , " + (getEndState() != null ? (getEndState().getCountSteps() - 1) : "") + "\n" +
+                sb.toString();
     }
 }

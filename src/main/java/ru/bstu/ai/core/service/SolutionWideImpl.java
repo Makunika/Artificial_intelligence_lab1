@@ -23,15 +23,12 @@ public class SolutionWideImpl implements Solution {
         int maxO = 0;
 
         while (!arrO.isEmpty()) {
-            if (arrO.size() > maxO) {
-                maxO = arrO.size();
+            if (arrO.size() + arrC.size() > maxO) {
+                maxO = arrO.size() + arrC.size();
             }
             iteration++;
 
             State x = arrO.poll();
-
-            System.out.println(x);
-            System.out.println("=======================!!!!!===");
             if (x.isWin()) {
                 return new Statistic(
                         iteration,
