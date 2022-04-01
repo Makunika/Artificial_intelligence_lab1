@@ -116,7 +116,7 @@ public class SolutionSMASearchImpl extends SolutionASearchImpl {
     private double getMinPath(State state, int maxDeep) {
         Cupboard winPoint = state.getField().winCup;
         Cupboard cup = state.getCupboard();
-        return minPathForWinCup(state, winPoint, cup, 1, maxDeep);
+        return minPathForWinCup(state, winPoint, cup, 0, maxDeep);
     }
 
     private double pathToCup(State state, Cupboard winCup, Cupboard cup, int stepForWin) {
@@ -146,7 +146,7 @@ public class SolutionSMASearchImpl extends SolutionASearchImpl {
                         winLeft
                 )
                 .filter(wc -> state.getField().isProbableCup(wc))
-                .map(wc -> minPathForWinCup(state, winTop, cup, step + 1, maxDeep))
+                .map(wc -> minPathForWinCup(state, wc, cup, step + 1, maxDeep))
                 .filter(path -> path.compareTo(0.) >= 0)
                 .min(Double::compareTo)
                 .orElse(-1.);
