@@ -145,9 +145,10 @@ public class SolutionSMASearchImpl extends SolutionASearchImpl {
                         winRight,
                         winLeft
                 )
-                .filter(wc -> !state.getField().isProbableCup(wc))
+                .filter(wc -> state.getField().isProbableCup(wc))
                 .map(wc -> minPathForWinCup(state, winTop, cup, step + 1, maxDeep))
+                .filter(path -> path.compareTo(0.) >= 0)
                 .min(Double::compareTo)
-                .orElse(0.);
+                .orElse(-1.);
     }
 }
